@@ -1,17 +1,17 @@
 { config, pkgs, ... }:
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    ./hardware-config.nix
+    ./gpu.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
-  networking.hostName = "nixos"; # Define your hostname.
+  # Define hostname
+  networking.hostName = "nixos";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -21,18 +21,20 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
+  # Set time zone.
   time.timeZone = "America/Denver";
 
-  # Select internationalisation properties.
+  # Set internationalisation properties.
   i18n.defaultLocale = "en_US.utf8";
 
-  # Enable the X11 windowing system.
+  # Enable X11
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
+  # Enable GNOME
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  
+  # Exclude unneeded GNOME apps
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour
@@ -48,7 +50,7 @@
       iagno # go game
       hitori # sudoku game
       atomix # puzzle game
-]);
+  ]);
 
   # Configure keymap in X11
   services.xserver = {
@@ -75,61 +77,6 @@
     # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.jarek = {
-    isNormalUser = true;
-    description = "jarek";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-    ];
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl.enable = true;
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
-  hardware.nvidia.modesetting.enable = true;
-  hardware.nvidia.prime.sync.allowExternalGpu = true;
-  hardware.nvidia.prime.offload.enable = true;
-  hardware.nvidia.prime.nvidiaBusId = "PCI:46:0:0";
-  hardware.nvidia.prime.intelBusId = "PCI:0:2:0";
-  
-  # external display on the eGPU card
-  # otherwise it's discrete mode using laptop screen
-  specialisation = {
-    external-display.configuration = {
-        system.nixos.tags = [ "external-display" ];
-        hardware.nvidia.modesetting.enable = pkgs.lib.mkForce false;
-        hardware.nvidia.prime.offload.enable = pkgs.lib.mkForce false;
-        hardware.nvidia.powerManagement.enable = pkgs.lib.mkForce false;
-        services.xserver.config = pkgs.lib.mkOverride 0
-  ''
-    Section "Module"
-        Load           "modesetting"
-    EndSection
-
-    Section "Device"
-        Identifier     "Device0"
-        Driver         "nvidia"
-        BusID          "46:0:0"
-        Option         "AllowEmptyInitialConfiguration"
-        Option         "AllowExternalGpus" "True"
-    EndSection
-  '';
-   };
-  };
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-      microsoft-edge
-      neovim
-      wget
-  ];
-
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -155,6 +102,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
-
+  system.stateVersion = "22.05";
 }
