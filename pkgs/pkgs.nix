@@ -1,5 +1,9 @@
 { config, pkgs, ... }:
 {
+    imports = [
+      ./python.nix
+  ];
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -10,4 +14,5 @@
       vim
       wget
   ];
+
 }
