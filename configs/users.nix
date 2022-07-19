@@ -1,6 +1,6 @@
 { config, ... }:
 {
-  # Define user accounts, set password with ‘passwd’
+  # Define user account, set password with ‘passwd’
   users.users.jarek = {
     isNormalUser = true;
     description = "jarek";
