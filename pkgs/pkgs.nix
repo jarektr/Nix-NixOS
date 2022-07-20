@@ -1,9 +1,5 @@
 { config, pkgs, ... }:
 {
-    imports = [
-      ./python.nix
-  ];
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -13,6 +9,8 @@
       git-lfs
       microsoft-edge
       neovim
+      python310
+      python310Packages.pip
       vim
       wget
   ];
