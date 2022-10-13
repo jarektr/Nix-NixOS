@@ -13,5 +13,6 @@
       python310Packages.pip
       vim
       wget
+      tlp
   ];
 }
