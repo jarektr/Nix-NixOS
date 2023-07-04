@@ -11,7 +11,6 @@
       neovim
       python310
       python310Packages.pip
-      vim
       wget
       tlp
   ];
