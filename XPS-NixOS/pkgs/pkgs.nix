@@ -7,7 +7,7 @@
   environment.systemPackages = with pkgs; [
       git
       git-lfs
-      microsoft-edge
+      vivaldi
       neovim
       python310
       python310Packages.pip
